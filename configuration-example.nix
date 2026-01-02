@@ -11,7 +11,7 @@
     
     # Import the auto-update module from this repository
     (builtins.fetchGit {
-      url = "https://github.com/yourusername/nixos-proxmox-image.git";
+      url = "https://github.com/argon-chat/nixos-config.git";
       ref = "main";
     } + "/modules/auto-update.nix")
   ];
@@ -19,8 +19,17 @@
   # Enable and configure auto-update
   services.nixos-auto-update = {
     enable = true;
-    repository = "https://github.com/yourusername/nixos-proxmox-image.git";
+    repository = "git@github.com:argon-chat/nixos-config.git";
     branch = "main";
+    
+    # IMPORTANT: Paste your SSH private deploy key here
+    # Generate with: ssh-keygen -t ed25519 -C "nixos-deploy"
+    # Then add the PUBLIC key to GitHub as a deploy key with read access
+    deployKey = ''
+      -----BEGIN OPENSSH PRIVATE KEY-----
+      PASTE_YOUR_PRIVATE_KEY_HERE
+      -----END OPENSSH PRIVATE KEY-----
+    '';
     
     # Check for updates every minute (configurable)
     checkInterval = "1min";
