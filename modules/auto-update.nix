@@ -102,11 +102,19 @@ in
           export GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY_FILE -o StrictHostKeyChecking=accept-new"
           trap "rm -f $DEPLOY_KEY_FILE" EXIT
         ''}
+        
+        # Always accept new SSH host keys (even without deploy key)
+        ${optionalString (cfg.deployKey == null) ''
+          export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=accept-new"
+        ''}
 
         # Initialize or update the repository
         if [ ! -d "$CONFIG_PATH" ]; then
           echo "Cloning repository for the first time..."
-          ${pkgs.git}/bin/git clone --branch "$BRANCH" "$REPO" "$CONFIG_PATH"
+          ${pkgs.git}/bin/git clone --branch "$BRANCH" "$REPO" "$CONFIG_PATH" || {
+            echo "Failed to clone repository. Skipping update."
+            exit 0
+          }
           UPDATED=true
         else
           cd "$CONFIG_PATH"
