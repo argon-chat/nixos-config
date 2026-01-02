@@ -13,7 +13,7 @@ help:
 	@echo "  test           - Build and run in VM for testing"
 	@echo "  dev            - Build development image using nixos-generators"
 
-build-proxmox:
+build-proxmox: clean
 	nix build .#proxmox
 
 build-qcow2:
@@ -39,7 +39,7 @@ dev:
 	nix run github:nix-community/nixos-generators -- -f proxmox -c ./image.nix
 	@echo "Dev build complete."
 
-dev-copy:
+dev-copy: build-proxmox
 	ssh root@${PROXMOX_HOST} "rm -rf /var/lib/vz/dump/*.vma.zst"
 	scp result/*.vma.zst root@${PROXMOX_HOST}:/var/lib/vz/dump/
 	@echo "Image copied to Proxmox server."

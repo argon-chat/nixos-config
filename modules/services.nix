@@ -7,7 +7,7 @@
   # SSH configuration
   services.openssh.settings = {
     # Enable password authentication (set to false after adding your SSH keys)
-    PasswordAuthentication = true;
+    PasswordAuthentication = false;
     KbdInteractiveAuthentication = false;
     PermitRootLogin = "prohibit-password";
   };
