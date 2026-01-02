@@ -36,5 +36,5 @@ test:
 	@echo "VM built. Run with: ./result/bin/run-nixos-vm"
 
 dev:
-    nix run github:nix-community/nixos-generators -- -f proxmox -c ./image.nix
+	nix run github:nix-community/nixos-generators -- -f proxmox -c ./image.nix
 	@echo "Dev build complete."
