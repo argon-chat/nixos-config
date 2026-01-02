@@ -1,0 +1,9 @@
+result
+result-*
+*.qcow2
+*.vma
+*.vma.zst
+*.raw
+*.iso
+.direnv
+.envrc
