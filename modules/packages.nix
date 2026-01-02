@@ -6,5 +6,7 @@
     curl
     git
     vim
+    python3
+    nodejs
   ];
 }
