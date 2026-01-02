@@ -56,7 +56,7 @@ in
     # Script to check for updates and rebuild
     systemd.services.nixos-auto-update = {
       description = "NixOS Auto-Update from Git Repository";
-      path = [ pkgs.git pkgs.nixos-rebuild pkgs.coreutils pkgs.openssh ];
+      path = [ pkgs.git pkgs.nixos-rebuild pkgs.coreutils pkgs.openssh pkgs.nettools ];
       
       serviceConfig = {
         Type = "oneshot";
@@ -104,11 +104,30 @@ in
           
           # Use the flake from the cloned repository
           if [ -f "$CONFIG_PATH/flake.nix" ]; then
-            ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake "$CONFIG_PATH#$(hostname)" || \
-            ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake "$CONFIG_PATH"
+            # Get the hostname
+            HOSTNAME=$(${pkgs.nettools}/bin/hostname)
+            
+            # Try to rebuild with hostname-specific config, fall back to generic
+            ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake "$CONFIG_PATH#$HOSTNAME" 2>/dev/null || \
+            ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake "$CONFIG_PATH#example" 2>/dev/null || \
+            ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake "$CONFIG_PATH" || {
+              echo "Failed to rebuild from flake, trying traditional config..."
+              # Fallback to traditional configuration
+              if [ -f "$CONFIG_PATH/image.nix" ]; then
+                ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch -I nixos-config="$CONFIG_PATH/image.nix"
+              else
+                echo "No suitable configuration file found. Skipping rebuild."
+                exit 0
+              fi
+            }
           else
             # Fallback to traditional configuration
-            ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch -I nixos-config="$CONFIG_PATH/image.nix"
+            if [ -f "$CONFIG_PATH/image.nix" ]; then
+              ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch -I nixos-config="$CONFIG_PATH/image.nix"
+            else
+              echo "No configuration file found. Skipping rebuild."
+              exit 0
+            fi
           fi
           
           ${if cfg.notifyOnUpdate then ''
