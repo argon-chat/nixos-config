@@ -1,4 +1,4 @@
-.PHONY: help build-proxmox build-qcow2 build-raw check update clean test
+.PHONY: help build-proxmox build-qcow2 build-raw check update clean test dev
 
 help:
 	@echo "NixOS Proxmox Image Builder"
@@ -11,6 +11,7 @@ help:
 	@echo "  update         - Update flake inputs"
 	@echo "  clean          - Remove build artifacts"
 	@echo "  test           - Build and run in VM for testing"
+	@echo "  dev            - Build development image using nixos-generators"
 
 build-proxmox:
 	nix build .#proxmox
@@ -33,3 +34,7 @@ clean:
 test:
 	nixos-rebuild build-vm --flake .#
 	@echo "VM built. Run with: ./result/bin/run-nixos-vm"
+
+dev:
+    nix run github:nix-community/nixos-generators -- -f proxmox -c ./image.nix
+	@echo "Dev build complete."

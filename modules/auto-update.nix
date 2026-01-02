@@ -85,7 +85,13 @@ in
 
       script = ''
         set -e
- != null) ''
+
+        CONFIG_PATH="${cfg.configPath}"
+        REPO="${cfg.repository}"
+        BRANCH="${cfg.branch}"
+        
+        # Setup SSH for git if deploy key is configured
+        ${optionalString (cfg.deployKey != null) ''
           # Create temporary deploy key file
           DEPLOY_KEY_FILE=$(mktemp)
           chmod 600 "$DEPLOY_KEY_FILE"
@@ -95,12 +101,6 @@ in
           
           export GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY_FILE -o StrictHostKeyChecking=accept-new"
           trap "rm -f $DEPLOY_KEY_FILE" EXIT
-        REPO="${cfg.repository}"
-        BRANCH="${cfg.branch}"
-        
-        # Setup SSH for git if deploy key is configured
-        ${optionalString (cfg.deployKeyPath != null) ''
-          export GIT_SSH_COMMAND="ssh -i ${cfg.deployKeyPath} -o StrictHostKeyChecking=accept-new"
         ''}
 
         # Initialize or update the repository
