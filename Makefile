@@ -38,3 +38,8 @@ test:
 dev:
 	nix run github:nix-community/nixos-generators -- -f proxmox -c ./image.nix
 	@echo "Dev build complete."
+
+copy:
+	ssh root@${PROXMOX_HOST} "rm -rf /var/lib/vz/dump/*.vma.zst"
+	scp result/*.vma.zst root@${PROXMOX_HOST}:/var/lib/vz/dump/
+	@echo "Image copied to Proxmox server."

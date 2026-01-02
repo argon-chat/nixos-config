@@ -13,16 +13,19 @@
   ];
   boot.initrd.kernelModules = [ "virtio_balloon" "virtio_console" "virtio_rng" ];
 
-  # Networking default (DHCP is usually fine for a template/base image)
-  networking.useDHCP = lib.mkDefault true;
-  networking.useNetworkd = lib.mkDefault true;
+  # Networking configuration
+  networking.useDHCP = false;
+  networking.interfaces = {
+    # Proxmox typically uses ens18 for the first network interface
+    ens18.useDHCP = true;
+  };
+  
+  # Enable predictable network interface names
+  networking.usePredictableInterfaceNames = true;
+  
+  # Ensure DHCP client is available
+  networking.dhcpcd.enable = true;
 
-  # Disk configuration
-  virtualisation.diskSize = 100 * 1024; # 100GB in MB
-  
-  # Memory configuration
-  virtualisation.memorySize = 8 * 1024; # 8GB default RAM in MB
-  
   # Shared memory configuration (2GB)
   boot.kernel.sysctl = {
     "kernel.shmmax" = 2147483648; # 2GB in bytes
