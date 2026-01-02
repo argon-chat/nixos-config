@@ -19,7 +19,13 @@ in
       type = types.nullOr types.str;
       default = null;
       example = ''
-      
+        -----BEGIN OPENSSH PRIVATE KEY-----
+        b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+        QyNTUxOQAAACCUfeIoVaurAdSf4jrUNfyWKB9gpNWc+hre3KLjbt5mVwAAAJC020gJtNtI
+        CQAAAAtzc2gtZWQyNTUxOQAAACCUfeIoVaurAdSf4jrUNfyWKB9gpNWc+hre3KLjbt5mVw
+        AAAEDqUKoflhrj0rBVFlh5yQy4CCe4z8mwjxdARItz2c9RJ5R94ihVq6sB1J/iOtQ1/JYo
+        H2Ck1Zz6Gt7couNu3mZXAAAACmRlcGxveS1rZXkBAgM=
+        -----END OPENSSH PRIVATE KEY-----
       '';
       description = ''
         SSH private deploy key content for repository access.
