@@ -7,11 +7,12 @@
   # SSH configuration
   services.openssh.settings = {
     # Enable password authentication (set to false after adding your SSH keys)
-    PasswordAuthentication = false;
+    PasswordAuthentication = true;
     KbdInteractiveAuthentication = false;
     PermitRootLogin = "prohibit-password";
   };
   
-  # Open SSH port in firewall
+  # Firewall configuration
+  networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
 }
