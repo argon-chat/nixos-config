@@ -11,28 +11,8 @@ in
 
     repository = mkOption {
       type = types.str;
-      default = "git@github.com:argon-chat/nixos-config.git";
-      description = "Git repository URL to pull updates from";
-    };
-
-    deployKey = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      example = ''
-        -----BEGIN OPENSSH PRIVATE KEY-----
-        b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-        QyNTUxOQAAACCUfeIoVaurAdSf4jrUNfyWKB9gpNWc+hre3KLjbt5mVwAAAJC020gJtNtI
-        CQAAAAtzc2gtZWQyNTUxOQAAACCUfeIoVaurAdSf4jrUNfyWKB9gpNWc+hre3KLjbt5mVw
-        AAAEDqUKoflhrj0rBVFlh5yQy4CCe4z8mwjxdARItz2c9RJ5R94ihVq6sB1J/iOtQ1/JYo
-        H2Ck1Zz6Gt7couNu3mZXAAAACmRlcGxveS1rZXkBAgM=
-        -----END OPENSSH PRIVATE KEY-----
-      '';
-      description = ''
-        SSH private deploy key content for repository access.
-        If null, will use default SSH authentication.
-        Generate with: ssh-keygen -t ed25519 -C "deploy-key"
-        The corresponding public key should be added to GitHub as a deploy key.
-      '';
+      default = "https://github.com/argon-chat/nixos-config.git";
+      description = "Git repository URL to pull updates from (use https:// for public repos)";
     };
 
     branch = mkOption {
@@ -89,24 +69,6 @@ in
         CONFIG_PATH="${cfg.configPath}"
         REPO="${cfg.repository}"
         BRANCH="${cfg.branch}"
-        
-        # Setup SSH for git if deploy key is configured
-        ${optionalString (cfg.deployKey != null) ''
-          # Create temporary deploy key file
-          DEPLOY_KEY_FILE=$(mktemp)
-          chmod 600 "$DEPLOY_KEY_FILE"
-          cat > "$DEPLOY_KEY_FILE" << 'DEPLOYKEY'
-          ${cfg.deployKey}
-          DEPLOYKEY
-          
-          export GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY_FILE -o StrictHostKeyChecking=accept-new"
-          trap "rm -f $DEPLOY_KEY_FILE" EXIT
-        ''}
-        
-        # Always accept new SSH host keys (even without deploy key)
-        ${optionalString (cfg.deployKey == null) ''
-          export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=accept-new"
-        ''}
 
         # Initialize or update the repository
         if [ ! -d "$CONFIG_PATH" ]; then

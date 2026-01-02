@@ -19,17 +19,8 @@
   # Enable and configure auto-update
   services.nixos-auto-update = {
     enable = true;
-    repository = "git@github.com:argon-chat/nixos-config.git";
+    repository = "https://github.com/argon-chat/nixos-config.git";
     branch = "main";
-    
-    # IMPORTANT: Paste your SSH private deploy key here
-    # Generate with: ssh-keygen -t ed25519 -C "nixos-deploy"
-    # Then add the PUBLIC key to GitHub as a deploy key with read access
-    deployKey = ''
-      -----BEGIN OPENSSH PRIVATE KEY-----
-      PASTE_YOUR_PRIVATE_KEY_HERE
-      -----END OPENSSH PRIVATE KEY-----
-    '';
     
     # Check for updates every minute (configurable)
     checkInterval = "1min";
